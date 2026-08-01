@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Trivia Glam · Reto de Maquillaje</title>
+<meta name="description" content="Trivia de verdadero o falso sobre maquillaje y cuidado de la piel, con resultado y Top 10." />
+<meta name="theme-color" content="#2A0E1C" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💋</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<canvas id="bgSparkles" class="bg-sparkles" aria-hidden="true"></canvas>
+<div class="bg-glow bg-glow--1" aria-hidden="true"></div>
+<div class="bg-glow bg-glow--2" aria-hidden="true"></div>
+
+<main class="stage">
+
+  <!-- ============ 1 · BIENVENIDA ============ -->
+  <section class="screen is-active" id="scWelcome">
+    <div class="card card--hero">
+      <p class="kicker reveal" style="--d:.05s">✧ &nbsp;Beauty Trivia&nbsp; ✧</p>
+      <h1 class="display reveal" style="--d:.14s"><span class="shine">Trivia Glam</span></h1>
+      <p class="lead reveal" style="--d:.24s">
+        Doce afirmaciones sobre piel y maquillaje.<br />Solo tienes que decidir: <em>¿verdadero o falso?</em>
+      </p>
+
+      <form class="entry reveal" style="--d:.34s" id="startForm" autocomplete="off">
+        <label class="field">
+          <span class="field__label">Tu nombre</span>
+          <input id="nameInput" list="participantes" placeholder="Escribe tu nombre" required maxlength="40" />
+        </label>
+        <datalist id="participantes"></datalist>
+        <button class="btn btn--gold btn--lg" type="submit">Empezar el reto 💄</button>
+      </form>
+
+      <ul class="rules reveal" style="--d:.44s">
+        <li><b>12</b> preguntas de verdadero o falso</li>
+        <li>Se cuenta el <b>tiempo</b>: desempata a quien responda más rápido</li>
+        <li>No se puede cambiar la respuesta, así que piénsalo bien</li>
+      </ul>
+
+      <button class="link-btn link-btn--quiet reveal" style="--d:.5s" id="toBoardFromHome" type="button">Ver el tablero →</button>
+    </div>
+  </section>
+
+  <!-- ============ 2 · PREGUNTAS ============ -->
+  <section class="screen" id="scQuiz">
+    <div class="quiz-top">
+      <div class="progress">
+        <div class="progress__bar"><span id="progressFill"></span></div>
+        <span class="progress__count" id="progressCount">1 / 12</span>
+      </div>
+      <span class="timer" id="timer">0:00</span>
+    </div>
+
+    <div class="card card--question" id="questionCard">
+      <p class="q-num" id="qNum">Pregunta 01</p>
+      <p class="q-text" id="qText">—</p>
+
+      <div class="answers" id="answers">
+        <button class="ans ans--true" data-value="true" type="button">
+          <span class="ans__mark">✓</span><span>Verdadero</span>
+        </button>
+        <button class="ans ans--false" data-value="false" type="button">
+          <span class="ans__mark">✕</span><span>Falso</span>
+        </button>
+      </div>
+
+      <div class="feedback" id="feedback" hidden>
+        <p class="feedback__title" id="fbTitle">—</p>
+        <p class="feedback__why" id="fbWhy">—</p>
+        <button class="btn btn--gold" id="nextBtn" type="button">Siguiente</button>
+      </div>
+    </div>
+
+    <p class="who">Respondiendo: <b id="whoName">—</b></p>
+  </section>
+
+  <!-- ============ 3 · RESULTADO ============ -->
+  <section class="screen" id="scResult">
+    <div class="card card--result">
+      <p class="kicker">✧ &nbsp;Tu resultado&nbsp; ✧</p>
+      <h2 class="display display--sm" id="resName">—</h2>
+
+      <div class="score">
+        <svg class="score__ring" viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="score__track" cx="60" cy="60" r="52" />
+          <circle class="score__fill" id="scoreArc" cx="60" cy="60" r="52" />
+        </svg>
+        <div class="score__center">
+          <span class="score__num" id="scoreNum">0</span>
+          <span class="score__of">de 12</span>
+        </div>
+      </div>
+
+      <p class="verdict" id="verdict">—</p>
+      <p class="res-time">Tiempo: <b id="resTime">0:00</b></p>
+
+      <div class="code-box">
+        <p class="code-box__label">Tu código de resultado</p>
+        <code id="resCode">—</code>
+        <p class="code-box__hint">Cópialo y mándalo al grupo para entrar al Top 10.</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn--gold" id="copyResult" type="button">Copiar para el grupo</button>
+        <button class="btn btn--ghost" id="toBoard" type="button">Ver tablero</button>
+        <button class="btn btn--ghost" id="retry" type="button">Repetir</button>
+      </div>
+
+      <details class="review">
+        <summary>Ver mis respuestas</summary>
+        <ol class="review__list" id="reviewList"></ol>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 4 · TABLERO ============ -->
+  <section class="screen" id="scBoard">
+    <div class="card">
+      <div class="card__head">
+        <h2 class="display display--xs">Top 10</h2>
+        <span class="badge" id="boardCount">0</span>
+      </div>
+
+      <div class="podium" id="podium"></div>
+      <ol class="rank" id="rank"></ol>
+      <p class="board-empty" id="boardEmpty">Todavía no hay resultados. Pega abajo los códigos que te manden 👇</p>
+
+      <details class="loader" id="loaderBox">
+        <summary>Cargar resultados</summary>
+        <p class="loader__hint">
+          Pega aquí los códigos que te envíen —puede ser la conversación entera, se detectan solos—
+          y pulsa <b>Agregar</b>.
+        </p>
+        <textarea id="codesInput" rows="5" spellcheck="false" placeholder="GLAM-… GLAM-… GLAM-…"></textarea>
+        <div class="loader__actions">
+          <button class="btn btn--gold" id="addCodes" type="button">Agregar</button>
+          <button class="btn btn--ghost" id="copyTop" type="button">Copiar Top 10</button>
+          <button class="btn btn--ghost btn--danger" id="clearBoard" type="button">Vaciar tablero</button>
+        </div>
+        <p class="loader__status" id="loaderStatus"></p>
+
+        <div class="manual">
+          <p class="loader__hint">¿Alguien te mandó una captura? Agrégala a mano:</p>
+          <div class="manual__row">
+            <input id="mName" placeholder="Nombre" maxlength="40" />
+            <input id="mScore" type="number" min="0" max="12" placeholder="Aciertos" />
+            <input id="mTime" placeholder="Tiempo (1:45)" />
+            <button class="btn btn--ghost" id="addManual" type="button">Agregar</button>
+          </div>
+        </div>
+      </details>
+
+      <button class="link-btn link-btn--quiet" id="backHome" type="button">← Volver al inicio</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">Hecho con 💋 &nbsp;·&nbsp; <span>Trivia Glam</span></footer>
+
+<script src="js/preguntas.js"></script>
+<script src="js/participantes.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
