@@ -20,11 +20,15 @@
   --line:rgba(232,195,107,.28);
   --glass:rgba(255,255,255,.045);
 
-  --serif:"Playfair Display", "Didot", "Bodoni MT", Georgia, serif;
-  --sans:"Montserrat", "Avenir Next", -apple-system, "Segoe UI", sans-serif;
-  --script:"Parisienne", "Snell Roundhand", cursive;
+  /* si las webfonts no cargan, las alternativas mantienen el mismo aire elegante */
+  --serif:"Playfair Display", "Didot", "Bodoni MT", "Hoefler Text", Garamond, Georgia, serif;
+  --sans:"Montserrat", "Avenir Next", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --script:"Parisienne", "Snell Roundhand", "Didot", "Hoefler Text", Georgia, serif;
 
   --shadow-soft:0 24px 60px -24px rgba(0,0,0,.75);
+
+  /* la pieza vive en un solo mundo visual: vino, oro y rosa */
+  color-scheme:dark;
 }
 
 *{box-sizing:border-box}
@@ -107,7 +111,7 @@ body::after{ /* velo de brillo sutil */
 }
 @keyframes shine{0%{background-position:0% 50%}100%{background-position:250% 50%}}
 .hero__script{
-  margin:6px 0 0;font-family:var(--script);font-size:clamp(20px,3.2vw,30px);
+  margin:6px 0 0;font-family:var(--script);font-style:italic;font-size:clamp(20px,3.2vw,30px);
   color:var(--rose-soft);opacity:.92;
 }
 .hero__rule{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;font-size:15px}
@@ -376,7 +380,7 @@ body::after{ /* velo de brillo sutil */
   -webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 4px 20px rgba(232,195,107,.35));
 }
-.modal__sub{position:relative;margin:14px 0 0;font-family:var(--script);font-size:23px;color:var(--rose-soft)}
+.modal__sub{position:relative;margin:14px 0 0;font-family:var(--script);font-style:italic;font-size:23px;color:var(--rose-soft)}
 .modal__actions{position:relative;display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
 
 /* scrollbars */

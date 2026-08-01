@@ -28,7 +28,10 @@
   const save = () => {
     try {
       localStorage.setItem(STORE, JSON.stringify({
-        names: state.names, remaining: state.remaining, winners: state.winners
+        names: state.names,
+        // si se recarga con el anuncio abierto, la ganadora ya sale de la ruleta
+        remaining: state.remaining.filter((x) => x !== state.pendingRemoval),
+        winners: state.winners
       }));
     } catch { /* modo privado: seguimos sin persistencia */ }
   };
@@ -122,9 +125,11 @@
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // nombre (se voltea en la mitad izquierda para que siempre se lea derecho)
+      // nombre: se voltea el que queda en la mitad izquierda de la pantalla
+      // (cuenta la rotación actual, porque el canvas se gira por CSS)
       ctx.save();
-      const flip = norm(mid) > Math.PI / 2 && norm(mid) < (Math.PI * 3) / 2;
+      const onScreen = norm(mid + state.rotation);
+      const flip = onScreen > Math.PI / 2 && onScreen < (Math.PI * 3) / 2;
       ctx.rotate(flip ? mid + Math.PI : mid);
 
       const outer = R - 26;          // borde exterior del texto
@@ -229,8 +234,6 @@
   function spin() {
     if (state.spinning) return;
     if (!state.remaining.length) { flash("no quedan participantes"); return; }
-    if (state.needsRedraw) { state.needsRedraw = false; drawWheel(); }
-
     state.spinning = true;
     hub.disabled = true;
     hub.classList.add("is-spinning");
@@ -282,14 +285,14 @@
     fx.classList.remove("burst"); void fx.offsetWidth; fx.classList.add("burst");
 
     state.winners.push(name);
-    if ($("#removeWinner").checked) {
-      state.remaining = state.remaining.filter((x) => x !== name);
-    }
+
+    // se saca a la ganadora al cerrar el modal, no ahora: así el puntero
+    // sigue señalando su gajo mientras se la anuncia
+    state.pendingRemoval = $("#removeWinner").checked ? name : null;
     save();
 
-    // la ruleta se redibuja al cerrar el modal: así el puntero
-    // sigue señalando a la ganadora mientras se anuncia
-    state.needsRedraw = true;
+    // redibujo con la ruleta ya detenida para reorientar los nombres
+    drawWheel();
 
     setTimeout(() => {
       showWinner(name);
@@ -314,7 +317,13 @@
     modal.hidden = true;
     cancelAnimationFrame(confettiRaf);
     confettiRaf = null;
-    if (state.needsRedraw) { state.needsRedraw = false; drawWheel(); }
+    if (state.pendingRemoval) {
+      state.remaining = state.remaining.filter((x) => x !== state.pendingRemoval);
+      state.pendingRemoval = null;
+      save();
+      renderPanel();
+      drawWheel();
+    }
   }
 
   const EMOJIS = ["💄", "💋", "✨", "🎀", "💅", "💖", "🌸", "👑"];
