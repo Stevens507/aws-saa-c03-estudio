@@ -108,7 +108,7 @@
       </div>
 
       <div class="actions">
-        <button class="btn btn--gold" id="copyResult" type="button">Copiar para el grupo</button>
+        <button class="btn btn--gold" id="copyResult" type="button">Enviar mi resultado</button>
         <button class="btn btn--ghost" id="toBoard" type="button">Ver tablero</button>
         <button class="btn btn--ghost" id="retry" type="button">Repetir</button>
       </div>
@@ -142,9 +142,15 @@
         <div class="loader__actions">
           <button class="btn btn--gold" id="addCodes" type="button">Agregar</button>
           <button class="btn btn--ghost" id="copyTop" type="button">Copiar Top 10</button>
+          <button class="btn btn--ghost" id="backupBoard" type="button">Copiar respaldo</button>
           <button class="btn btn--ghost btn--danger" id="clearBoard" type="button">Vaciar tablero</button>
         </div>
         <p class="loader__status" id="loaderStatus"></p>
+        <p class="loader__hint loader__hint--warn">
+          ⚠ El tablero vive solo en <b>este</b> navegador. Guarda de vez en cuando el
+          <b>respaldo</b> en una nota o en tu chat: si cambias de aparato o borras los datos,
+          pégalo aquí arriba y el Top 10 vuelve entero.
+        </p>
 
         <div class="manual">
           <p class="loader__hint">¿Alguien te mandó una captura? Agrégala a mano:</p>

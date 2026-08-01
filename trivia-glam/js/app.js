@@ -214,6 +214,13 @@
     const r = state.last;
     if (!r) return;
     const txt = `💄 Trivia Glam — ${r.name}\n${r.correct}/${r.total} aciertos en ${mmss(r.seconds)}\n${makeCode(r)}`;
+
+    // en el teléfono abre el menú de compartir (WhatsApp en un toque);
+    // en el escritorio no existe, así que se copia
+    if (navigator.share) {
+      try { await navigator.share({ text: txt }); return; }
+      catch (e) { if (e && e.name === "AbortError") return; }
+    }
     await copy(txt, $("#copyResult"), "¡Copiado!");
   });
 
@@ -333,6 +340,16 @@
       top.map((r, i) => `${String(i + 1).padStart(2, "0")} · ${r.name} — ${r.correct}/${r.total} · ${mmss(r.seconds)}`)
     ).join("\n");
     await copy(txt, $("#copyTop"), "¡Copiado!");
+  });
+
+  // el respaldo son los propios códigos: pegarlos de vuelta reconstruye el tablero
+  $("#backupBoard").addEventListener("click", async () => {
+    if (!board.length) { $("#loaderStatus").textContent = "El tablero está vacío."; return; }
+    const txt = ["Respaldo del tablero · Trivia Glam", ""]
+      .concat(ranked().map((r) => `${r.name} — ${r.correct}/${r.total} · ${mmss(r.seconds)}  ${makeCode(r)}`))
+      .join("\n");
+    await copy(txt, $("#backupBoard"), "¡Copiado!");
+    $("#loaderStatus").textContent = `Respaldo de ${board.length} resultado${board.length > 1 ? "s" : ""} copiado. Guárdalo en una nota o mándatelo por chat.`;
   });
 
   $("#clearBoard").addEventListener("click", () => {
