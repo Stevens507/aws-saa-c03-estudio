@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sorteo Glam · Ruleta de Maquillaje</title>
+<meta name="description" content="Ruleta de sorteo con temática de maquillaje: elegante, animada y lista para elegir a la ganadora." />
+<meta name="theme-color" content="#2A0E1C" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💄</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Montserrat:wght@300;400;500;600&family=Parisienne&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<canvas id="bgSparkles" class="bg-sparkles" aria-hidden="true"></canvas>
+<div class="bg-glow bg-glow--1" aria-hidden="true"></div>
+<div class="bg-glow bg-glow--2" aria-hidden="true"></div>
+<div class="bg-glow bg-glow--3" aria-hidden="true"></div>
+<div class="floaties" id="floaties" aria-hidden="true"></div>
+
+<header class="hero">
+  <p class="hero__kicker reveal" style="--d:.05s">✧ &nbsp;Beauty Giveaway&nbsp; ✧</p>
+  <h1 class="hero__title reveal" style="--d:.15s"><span class="shine">Sorteo Glam</span></h1>
+  <p class="hero__script reveal" style="--d:.28s">gira la ruleta y descubre a la afortunada</p>
+  <div class="hero__rule reveal" style="--d:.38s"><span></span>💄<span></span></div>
+</header>
+
+<main class="stage">
+
+  <section class="wheel-area reveal" style="--d:.45s" aria-label="Ruleta del sorteo">
+    <div class="wheel-shell">
+      <div class="bulbs" id="bulbs" aria-hidden="true"></div>
+      <div class="wheel-ring">
+        <canvas id="wheel" width="620" height="620" role="img" aria-label="Ruleta con los nombres de las participantes"></canvas>
+      </div>
+
+      <button id="spinBtn" class="hub" aria-label="Girar la ruleta">
+        <span class="hub__ring"></span>
+        <span class="hub__face">
+          <span class="hub__icon">💄</span>
+          <span class="hub__text">GIRAR</span>
+        </span>
+      </button>
+
+      <div class="pointer" aria-hidden="true">
+        <svg viewBox="0 0 60 120" width="60" height="120">
+          <defs>
+            <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FFF3C4"/><stop offset="35%" stop-color="#E8C36B"/>
+              <stop offset="60%" stop-color="#B8862F"/><stop offset="100%" stop-color="#F3DFA0"/>
+            </linearGradient>
+            <linearGradient id="lip" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#FF6B94"/><stop offset="50%" stop-color="#D6335F"/>
+              <stop offset="100%" stop-color="#8E1638"/>
+            </linearGradient>
+          </defs>
+          <rect x="18" y="4" width="24" height="46" rx="7" fill="url(#gold)"/>
+          <rect x="21" y="14" width="18" height="3" rx="1.5" fill="#fff" opacity=".55"/>
+          <rect x="16" y="48" width="28" height="10" rx="4" fill="url(#gold)"/>
+          <path d="M20 56 h20 l-4 34 c-.6 5 -2.6 8 -6 8 s-5.4 -3 -6 -8 z" fill="url(#lip)"/>
+          <path d="M22.5 58 h5 l-3 30 z" fill="#fff" opacity=".22"/>
+          <path d="M30 98 l7 8 -7 12 -7 -12 z" fill="url(#lip)"/>
+        </svg>
+      </div>
+
+      <div class="wheel-fx" id="wheelFx" aria-hidden="true"></div>
+    </div>
+
+    <div class="wheel-meta">
+      <span class="chip chip--gold" id="countChip">0 participantes</span>
+      <span class="chip" id="statusChip">lista para girar</span>
+    </div>
+  </section>
+
+  <aside class="panel reveal" style="--d:.6s">
+    <div class="card">
+      <div class="card__head">
+        <h2>Participantes</h2>
+        <button class="link-btn" id="editBtn" type="button">editar</button>
+      </div>
+      <ul class="names" id="namesList"></ul>
+      <div class="editor" id="editor" hidden>
+        <label for="namesInput" class="editor__label">Un nombre por línea</label>
+        <textarea id="namesInput" spellcheck="false" rows="10"></textarea>
+        <div class="editor__actions">
+          <button class="btn btn--gold" id="saveNames" type="button">Guardar lista</button>
+          <button class="btn btn--ghost" id="cancelNames" type="button">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head">
+        <h2>Ganadoras</h2>
+        <span class="badge" id="winnerCount">0</span>
+      </div>
+      <ol class="winners" id="winnersList">
+        <li class="winners__empty">Aún no hay ganadoras… ✨</li>
+      </ol>
+    </div>
+
+    <div class="card card--options">
+      <label class="switch">
+        <input type="checkbox" id="removeWinner" checked />
+        <span class="switch__track"><span class="switch__thumb"></span></span>
+        <span class="switch__label">Sacar a la ganadora de la ruleta</span>
+      </label>
+      <label class="switch">
+        <input type="checkbox" id="soundOn" checked />
+        <span class="switch__track"><span class="switch__thumb"></span></span>
+        <span class="switch__label">Sonido</span>
+      </label>
+      <div class="card__actions">
+        <button class="btn btn--ghost" id="resetBtn" type="button">↺ Reiniciar sorteo</button>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<footer class="foot">Hecho con 💋 &nbsp;·&nbsp; <span>Sorteo Glam</span></footer>
+
+<!-- Modal ganadora -->
+<div class="modal" id="modal" hidden>
+  <canvas id="confetti" class="confetti"></canvas>
+  <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="winnerName">
+    <div class="modal__halo"></div>
+    <p class="modal__kicker">✦ &nbsp;La ganadora es&nbsp; ✦</p>
+    <p class="modal__name" id="winnerName">—</p>
+    <p class="modal__sub">¡Felicidades, preciosa! 💄💕</p>
+    <div class="modal__actions">
+      <button class="btn btn--gold" id="againBtn" type="button">Girar de nuevo</button>
+      <button class="btn btn--ghost" id="closeBtn" type="button">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/participantes.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
